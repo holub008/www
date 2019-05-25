@@ -1,0 +1,177 @@
+<html>
+<body>
+
+<h1 id="theuniformplinkoproblem">The Uniform Plinko Problem</h1>
+
+<p>Generating asymptotically uniform distributions from Plinko boards.</p>
+
+<h2 id="aboutplinko">About Plinko</h2>
+
+<p>Plinko is a game of chance, featuring a board, ball, and buckets. The
+board features a set of pegs positioned such that the ball may fall and
+bounce between them, going to the left or right of a given
+peg with predetermined probabilities. Buckets are positioned at the
+of the board in a way that the ball must fall into one of them. The
+game is played by dropping the ball from the top of the board, and the
+player wins whatever prize is associated with the bucket the ball falls
+into.</p>
+
+<p><img src="/images/plinko_board.jpg" alt="plinko_board" /></p>
+
+<p>Most variants of the game:</p>
+
+<ul>
+<li>allow the player to select a starting peg at the top of the board</li>
+
+<li>feature boards that are taller than wider - requiring walls on the
+side of the board that the ball may bump into before falling to the next
+peg</li>
+</ul>
+
+<h3 id="inaction">In Action</h3>
+
+<p>A few notable examples of this game in action:</p>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=rXYcFYaN_ns">Plinketto</a>, a "worst of"
+movie review show in which the movies reviewed are selected via
+Plinko. This variant inspired my interest in the problem; no reviewer
+wants the responsibility of picking which bad movie to watch (yet one
+needs to be picked). Plinko, as will be discussed shortly, is not "fair"
+conditioned on the starting peg. Therefore, the reviewers are somewhat
+personally responsible for the movie watched. My goal is to entirely
+remove this responsibility by making the sampling distribution uniform.</li>
+
+<li><a href="https://www.youtube.com/watch?v=naUppHrHJpI">The Price is Right</a>, a
+consumer game show. Their variant is interesting because it's
+non-trivial to manually compute expectations and thereby select the
+optimal starting peg.</li>
+</ul>
+
+<h3 id="statisticalproperties">Statistical Properties</h3>
+
+<p>To make analysis simpler, we'll constrain Plinko to only allow
+the player to drop the ball onto one starting peg, and furthermore, no
+walls will be present.</p>
+
+<p>In any real-life Plinko board I have observed, the probability of going left at
+any peg is approximately .5 (and .5 for right by complement). This means
+the pegs may be thought of IID Bernoulli trials, inducing a Binomial
+distribution determining the final bucket landed in (by summing up the
+number of left/right falls). Frustratingly, Plinko is often referenced
+as a demonstration of the Central Limit Theorem (CLT). This is true, but it's
+disingenuous to imply such directness. The direct distribution is
+binomial(n=board depth,p=.5), which is asymptotically approximated by the Normal
+distribution through the CLT (as a linear combination of IID Bernoulli
+trials) at large n and n*p.</p>
+
+<p>Here's the asymptotic break out of bucket outcomes for a constrained
+depth 10 Plinko board under 50/50 splits:</p>
+
+<p><img src="/images/plinko_5050_depth10.svg" width="100%" height="500px"/></p>
+
+<p>And the visual distribution:</p>
+
+<p><img src="/images/constrained_depth_10_plinko_histogram.png" alt="plinko_50_50_hist" /></p>
+
+<h2 id="theuniformplinkoproblem-1">The Uniform Plinko Problem</h2>
+
+<p>Great! In the boring world, we have a binomial distribution. Can we
+construct Plinko boards that produce other distributions? Specifically,
+can we construct the uniform distribution for any depth Plinko board?</p>
+
+<h3 id="thoughts">Thoughts</h3>
+
+<p>Some thoughts relevant to this problem:</p>
+
+<ul>
+<li>Our only lever of control (for a fixed depth) is the probability
+associated with left and right falls.
+
+
+<ul>
+<li>When probabilities are no longer 50/50, the Bernoulli trials at each
+level of the board are no longer independent.</li>
+
+<li>Tweaking a probability high in the board has a substantial impact on
+outcomes at lower levels of the board</li></ul>
+</li>
+
+<li>The product of probabilities for falling left/right along the path
+taken by the ball represents the total probability of that path
+occurring.
+
+
+<ul>
+<li>i.e. Bernoulli trials along a path remain independent</li></ul>
+</li>
+
+<li>Same as before, unless a probability is exactly 0 or 1, a bucket k
+has nCk possible paths (n = depth, k = number of left falls) from the
+starting peg.</li>
+
+<li>I believe any solution to half the board should be able to be
+reflected to produce a valid full solution.</li>
+</ul>
+
+<h3 id="approach">Approach</h3>
+
+<p>The approach taken was brute force and numerical:</p>
+
+<ul>
+<li>Traverse each starting peg -> bucket path in the Plinko board</li>
+
+<li>For each path, build an executable product of the probabilities along
+the path</li>
+
+<li>For each bucket, build an executable summation of the path products</li>
+</ul>
+
+<p>At this point, we have a system of equations! That is, an equation per
+bucket, with each equation equal to uniform density 1 / (1 + n).
+For example, a depth 2
+board with 3 nodes has the following system, where x_i is the
+probability of falling left for the ith node, labelled 1...3 top to
+bottom, left to right:</p>
+
+<pre><code class="text language-text">x_1 * x_2 = 1 / 3
+x_1 * (1-x_2) + (1 - x_1) * x_3 = 1 / 3
+(1 - x_1) * (1 - x_3) = 1 / 3
+</code></pre>
+
+<p>In general, this system will be underdetermined. For a depth n
+board, there are n + 1 buckets, leading to n + 1 equations of n(n+1)/2
+parameters. So, we prefer an optimization approach. I chose to define a loss
+function on the bucket outcomes B<em>i as: (1 / (n + 1) - B</em>i)^2, which is
+simply squared loss on the uniform density. Depending on the numerical
+optimization method used, other loss functions may be more ideal. With a
+loss function in hand, all that is left is to apply a gradient based
+optimizer. I had success with <a href="https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm">BFGS</a>,
+constraining the state space to [0,1] (valid probabilities) for all
+parameters.</p>
+
+<h2 id="solutions">Solutions</h2>
+
+<p>Solutions are rendered with right fall probabilities only; left fall
+probabilities are simply derived as the complement. Note that the 
+solutions are rounded to two decimal places for clean rendering. To 
+reproduce these results and graphics see 
+<a href="./uniform_plinko.py">uniform_plink.py</a>.</p>
+
+<h3 id="depth3">Depth 3</h3>
+
+<p><img src="/images/plinko_solution_3.svg" width="100%" height="500px"/></p>
+
+<h3 id="depth5">Depth 5</h3>
+
+<p><img src="/images/plinko_solution_5.svg" width="100%" height="500px"/></p>
+
+<h3 id="depth10">Depth 10</h3>
+
+<p>Using the above python code, this solution took around 10 seconds to
+compute.</p>
+
+<p><img src="/images/plinko_solution_10.svg" width="100%" height="500px"/></p>
+
+</body>
+</html>
