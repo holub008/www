@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Citation Network Autocorrelation</title>
+  <style type="text/css">body{margin:40px auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0 10px}h1,h2,h3{line-height:1.2}</style>
+ </head>
+ <body>
+ 	<h1>Statistical Inference on Citation Networks and Literature Search</h1>
+	In this article, we explore the citation network encountered in a literature search for ischemic stroke treatment devices.
+	<h2>About</h2>
+	<h3>Literature Search</h3>
+	In order to build a meta-analytical database, Nested Knowledge searches a large volume of publications indexed in medical journal literature databases (e.g. <a href="https://www.ncbi.nlm.nih.gov/pubmed/">PubMed</a>). Searches are executed via keyword search or MeSH tag matching, often resulting in large result sets of studies to consider for inclusion in our database. The decision to use a study is based on inclusion criteria (e.g. the study must be a clinical trial, it must be published in English). These criteria are automated as much as possible, but the process of inclusion/exclusion still requires a good deal of time from our expert reviewers.
+	<h3>Citation Networks</h3>
+	Citation networks provide a medium to visualize &amp; reason about a set of studies. For the graph theory uninitiated, studies may be formulated as points (nodes or vertices) and citations as connections between studies (edges). In the below example, we have 3 studies: A, B, &amp; C. The connections between these points can be read as: "study A cites study B", and "study B cites study C".
+
+	<br/>
+	<img src="/images/citation_network_simple.jpg" alt="Simple citation network"  width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 500px" />
+	<br/>
+
+	Citations networks can handle arbitrary pairwise relations- for example studies with multiple citations or no citations.
+
+	<br/>
+	<img src="/images/citation_network_complex.jpg" alt="More complex citation network"  width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 500px" />
+	<br/>
+
+	&nbsp;
+	<h2>Ischemic Stroke Therapies</h2>
+	The first nest we built at Nested Knowledge investigates the question of how choice of therapy impacts patient outcomes for ischemic stroke sufferers. Treatments include thrombolytic therapies (e.g. IV-tPA) and thrombectomy (e.g. stent retrievers, contact aspiration). As such, we used literature search terms like:
+	<ul>
+		<li>"stent retriever"</li>
+		<li>"acute ischemic stroke trevo"</li>
+		<li>"iv-tpa"</li>
+	</ul>
+	among 20 total terms. After automated &amp; expert (manual) inclusion/exclusion, we have a list of studies like:
+	<pre>                        title search_term exclusion_reason
+	Alternative technique for...       trevo     Not related 
+	[Mechanical thrombectomy ...       trevo Foreign Language
+	Haloperidol and Risperido...       trevo        non-human
+	Optimizating Clot Retriev...       trevo     Not related 
+	Safety and Efficacy of Me...       trevo    Meta-analysis
+	Mechanical thrombectomy w...       trevo     Not related 
+	Association of Rewarming ...       trevo     Not related 
+	Functional outcomes and r...       trevo    Meta-analysis
+	...</pre>
+	All 8 of these studies were excluded for being non-English, non-human, or simply not being related to the research question.
+
+	In total, 3948 studies (!) were considered, and 67 were included, giving a hit rate of around 2%.
+	<h3>Citation Network</h3>
+	Using citation data, we can visualize the studies in the literature search. Note that the ~2,000 studies without citation were excluded from the network, to de-clutter the presentation.
+
+	<br/>
+	<img src="/images/uncolored_network.jpg" alt="Citation network"  width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 1000px" />
+	<br/>
+
+	A couple characteristics jump out:
+	<ul>
+		<li>There are several disconnected components (for example, the outer donut). There are at least two large networks of studies that do not reference each other at all! This might suggest two totally distinct fields of study.</li>
+		<li>There are several arms, or regions of dense connectivity, within the central network. This might suggest several sub-fields within the main field of study.</li>
+	</ul>
+	<h3>Adding in Inclusion</h3>
+	Let's make the network more useful by adding in whether a study was included (orange) or excluded (green).
+
+	<br/>
+	<img src="/images/colored_network.jpg" alt="Study Inclusion Citation Network"  width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 1000px" />
+	<br/>
+
+	Woah! There appears to be some interesting things going on here. Below are some observations, including possible explanations:
+	<ul>
+		<li>The disconnected components (outer donut) contain <span style="text-decoration: underline;">no</span> included studies
+	<ul>
+		<li><span style="text-decoration: underline;">Causal mechanism:</span> Disconnected components may represent totally unrelated studies that happened to match keywords.</li>
+	</ul>
+	</li>
+		<li>The two arms we identified above (now at 1:30 &amp; 10:00 on the clockface) also contain <span style="text-decoration: underline;">no</span> included studies
+	<ul>
+		<li><span style="text-decoration: underline;">Causal mechanism:</span> These arms represent unrelated sub-fields (e.g. hemorrhagic stroke) which would tend to contain a dense citation network</li>
+		<li><span style="text-decoration: underline;">Causal mechanism:</span> These arms represent undesirable study types (e.g. non-human studies) which would tend to cite one another.</li>
+	</ul>
+	</li>
+		<li>In general, cited studies lie at the center of the network &amp; are large points (size is dictated by number of citations), meaning they are densely connected with one another
+	<ul>
+		<li><span style="text-decoration: underline;">Causal mechanism:</span> Included studies (which are only original clinical trials in this case) are generally high quality research and therefore well-cited, or alternatively cited by well-cited studies.</li>
+		<li><span style="text-decoration: underline;">Causal mechanism:</span> Existing meta-analyses tend to have immediate citations to the same set of clinical trials</li>
+	</ul>
+	</li>
+	</ul>
+	These insights lead to a hypothesis:
+	<blockquote>Included studies tend to lie close to one another on the citation network</blockquote>
+	where "lying close" is defined by shortest path between two studies. This hypothesis is meaningful because, if true, it suggests a method for reducing time spent on literature search inclusion/exclusion. After a certain point in time in the search, if a study is not near other included studies, we might feel confident that the study will be excluded. We could then move it to the bottom of the priority list or even auto-exclude it, resulting in saved time for our expert reviewers.
+
+	So, how do we test the significance of this hypothesis?
+	<h2>Inference on Networks</h2>
+	<h3>Spatial Autocorrelation</h3>
+	Spatial autocorrelation is a measure of how dependent the effect or occurrence of some phenomenon is on its surroundings. For example, the red coloration of the dots on the left show a high degree of spatial autocorrelation, while the ones on the right do not.
+
+	<br/>
+	<img src="/images/autocorr.jpg" alt="Autocorrelation vs. Independence" width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 500px"/>
+	<br/>
+
+	In this framework, our hypothesis can be reformulated:
+	<blockquote>Study inclusion is spatially autocorrelated.</blockquote>
+	<a href="https://en.wikipedia.org/wiki/Moran%27s_I">Moran's I</a> is a commonly used statistic for measuring spatial autocorrelation. For network data, Moran's I effectively takes a parameter describing how many neighbors to include (i.e. the degree of autocorrelation that we expect). We can visualize this parameter with the below network:
+
+	<br/>
+	<img src="/images/shortest_paths.jpeg" alt="Shortest Paths Example" width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 400px" />
+	<br/>
+
+	Focused on point 0:
+	<ul>
+		<li>If we select Moran's I parameter to be 1, all points labelled 1 will be considered in the autocorrelation measurement.</li>
+		<li>If we select Moran's I parameter to be 2, all points labelled 1 &amp; 2 will be considered in the autocorrelation measurement.</li>
+		<li>etc.</li>
+	</ul>
+	In other words, this parameter controls how far reaching we expect the autocorrelation to be.
+	<h3>Monte Carlo Simulation</h3>
+	Hypothesis testing is centered around demonstrating that a "null hypothesis" is not justifiable, which leads to a mutually exclusive alternative. Our (alternative) hypothesis is that "study inclusion is spatially autocorrelated". So, our null hypothesis could be "study inclusion is independent of spatial location". If this null hypothesis is true, it means that the observed location of inclusion is<em> indistinguishable from random assignment of inclusion to locations. </em>
+
+	Monte Carlo simulation is the literal implementation of this idea. The procedure is to:
+	<ol>
+		<li>Compute the statistic of interest on the observed data</li>
+		<li>Randomly reassign inclusion to studies (without replacement) and compute the statistic of interest</li>
+		<li>Repeat (2) many times</li>
+	</ol>
+	The extent to which the statistic computed in (1) is extreme in the empirical distribution computed in (2) indicates statistical significance.
+	<h2>Testing Our Hypothesis</h2>
+	Below is a histogram of the Monte Carlo empirical distribution with Moran's I parameter of 1 and again for 2. The observed Moran's I is the black vertical bar.
+
+	<br/>
+	<img src="/images/moran1_mc.jpeg" alt="Moran's I (1st nearest neighbors)" width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 500px" />
+	<br/>
+
+	<br/>
+	<img src="/images/moran2_mc.jpeg" alt="Moran's I (2nd nearest neighbors)" width="100%" style="margin-top: 15px; margin-bottom: 15px; max-width: 500px" />
+	<br/>
+
+	Given that 100 Monte Carlo trials were run, both p-values are reported as &lt; .01, but the significance is certainly more convincing than that. Note the autocorrelation appears even more significant the more far-reaching we allow the autocorrelation to be (parameter=2).
+	<h2>In Action</h2>
+	Given the significant effect with plausible causal mechanisms, we'll be implementing inclusion probability ordering in literature search for future nests. On the immediate horizon is a comparison of flow diverter efficacy for hemorrhagic stroke- stay tuned!
+  </body>
+</html>
