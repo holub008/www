@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Molly and Karl&apos;s Wedding</title>
+  <style type="text/css">
+    body{
+      font-family: Georgia, serif;
+      background: #FFFDD0;
+      margin:40px auto;
+      max-width:650px;
+      line-height:1.6;
+      font-size:18px;
+      color:#444;padding:0 10px
+    }
+    h1,h2,h3{line-height:1.2;}
+    a{color: #022052}
+  </style>
+ </head>
+ <body style="width: max(250px, 50vw);">
+   <div>
+     <h2>Molly & Karl Are Getting Married!</h2>
+     <div style="display: flex; flex-direction: row; justify-content: center;">
+         <img
+           src="/images/karmo1.jpg"
+           alt="KarMo"
+           height="400px"
+         />
+     </div>
+     <ul>
+       <li><b>When:</b> August 23<sup>rd</sup> 2025, 3:30 - 8:00PM</li>
+       <li><b>Where:</b> <a href="https://maps.app.goo.gl/oigFNzAxSTwQX3tG6">Lester Park</a></li>
+       <li>Please <a href="https://forms.gle/Wyj94YwuYNvecHhG7">RSVP here</a></li>
+     </ul>
+     <h3>Schedule</h3>
+     <p>
+       <ul>
+         <li><b>4:00 - 4:30PM</b> Wedding ceremony located along Amity Creek</li>
+         <li><b>4:30 - 8:00PM</b> BBQ food truck in the parking lot</li>
+         <li><b>5:00 - 7:00PM</b> Love Creamery ice cream cart</li>
+       </ul>
+     </p>
+     <h3>What to bring</h3>
+     <h4>BYOC</h4>
+     <p>
+       This is a <b>Bring Your Own Chair</b> event! Please bring a lawn chair or picnic blanket for the ceremony and relaxing throughout the day.
+       We'll have some seating available for out-of-staters and forgetful people.
+     </p>
+     <h4>Attire</h4>
+     <p>
+        Whatever you'd like, though we'd recommend at most "active formal wear". Wear something comfortable & safe for a walk,
+        playing lawn games, rollicking on the playground and in the creek with kids, etc.
+     </p>
+     <p>For reference, Karl is probably going to change into swimming trunks after the ceremony.</p>
+     <h4>Weather contingency</h4>
+     <p>
+        Shelter will be relatively limited, meaning you should pack a rain jacket or umbrella in the event of a cloudy forecast.
+        If it's truly miserable outside, we will move indoors to the <a href="https://maps.app.goo.gl/XoXsz4w1AVF59yDV7">Lester Amity Chalet</a>.
+     </p>
+     <h3>Activities</h3>
+     <p>
+       Molly and I are in love... with Lester Park! Some of the things you might enjoy doing here:
+       <ul>
+         <li>Hike to our favorite waterfalls, both of which have swimming holes:</li>
+         <ul>
+           <li><a href="https://maps.app.goo.gl/6zgaj6tJfZe3Fhge8">The Deeps</a></li>
+           <li><a href="https://maps.app.goo.gl/XneN1uX2bLVMHyiW6">Lester Falls</a></li>
+         </ul>
+         <li>Follow the paved Lake Walk down to <a href="https://maps.app.goo.gl/WJiv2oMvCjFXLWdv5">Brighton Beach</a>
+         <li>Bring your bike and climb the mixed surface hill up to the <a href="https://www.strava.com/segments/15216307">Hawk Ridge overlook</a>
+         <ul>
+           <li>Molly climbed this hill 35 times in one summer!</li>
+         </ul>
+         <li>Stick around on Sunday and mountain bike the <a href="/ddt2025">2nd Edition of the Double Duluth Traverse</a> with us.</li>
+       </ul>
+     </p>
+     <p>
+       We'd also love it if you brought games and other activities to share with others. There is a large, flat grass field available to us.
+     </p>
+     <h3>Parking</h3>
+     <p>
+       In the event of a full parking lot, parking is available anywhere in the residential areas west of Occidental Boulevard / 61st Ave. Duluth unfortunately follows alternate side parking, make
+       sure to park on the odd side of the street on August 23<sup>rd</sup>!
+   </div>
+ </body>
+</html
